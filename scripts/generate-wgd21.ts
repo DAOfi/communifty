@@ -8,9 +8,7 @@ for (let i = 0; i < numTokens; ++i) {
     image: `ipfs://Qmdq2F9922oRDwmfoDLSErq4BBhfDmoAyNuzCVznCiXdSF/wgd21_assets/${
       i + 1
     }.jpg`,
-    attributes: [
-      { trait_type: 'Print', value: i + 1, display_type: 'number' },
-    ],
+    attributes: [{ trait_type: 'Print', value: i + 1, display_type: 'number' }],
   }
   fs.writeFileSync(`wgd21_metadata/${i + 1}`, JSON.stringify(metadata))
 }

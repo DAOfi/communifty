@@ -4,8 +4,7 @@ import CommuniftyNFT from '../build/contracts/CommuniftyNFT.sol/CommuniftyNFT.js
 
 async function main() {
   const provider = new ethers.providers.JsonRpcProvider(
-    process.env.JSONRPC_URL ||
-      'http://localhost:8545'
+    process.env.JSONRPC_URL || 'http://localhost:8545'
   )
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY || '', provider)
   console.log('Wallet:', wallet.address)
@@ -39,7 +38,7 @@ async function main() {
     {
       gasLimit: 10000000,
       gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
-      nonce
+      nonce,
     }
   )
 

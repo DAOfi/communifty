@@ -3,8 +3,7 @@ import CommuniftyNFT from '../artifacts/contracts/CommuniftyNFT.sol/CommuniftyNF
 
 async function main() {
   const provider = new ethers.providers.JsonRpcProvider(
-    process.env.JSONRPC_URL ||
-      'http://localhost:8545'
+    process.env.JSONRPC_URL || 'http://localhost:8545'
   )
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY || '', provider)
   console.log('Wallet:', wallet.address)
