@@ -9,10 +9,8 @@ async function main() {
   console.log('Wallet:', wallet.address)
 
   const gas = process.env.GAS || '50'
-  const nonce = await wallet.getTransactionCount()
 
   console.log('Gas:', gas)
-  console.log('Nonce:', nonce)
 
   const pair = new ethers.Contract(
     process.env.PAIR || '',
@@ -25,7 +23,6 @@ async function main() {
   let tx = await pair.withdrawOwnerFees({
     gasLimit: 10000000,
     gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
-    nonce,
   })
 
   await tx.wait()
@@ -34,7 +31,6 @@ async function main() {
   tx = await pair.withdrawPlatformFees({
     gasLimit: 10000000,
     gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
-    nonce,
   })
 
   await tx.wait()
@@ -43,7 +39,6 @@ async function main() {
   tx = await pair.close({
     gasLimit: 10000000,
     gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
-    nonce,
   })
 
   await tx.wait()
