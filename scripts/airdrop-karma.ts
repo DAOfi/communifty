@@ -50,7 +50,7 @@ async function main() {
           })
 
           // await tx.wait()
-          await sleep(2000)
+          await sleep(3000)
           console.log(tx.hash, oldOwner, i)
         } catch (e) {
           console.log('ERROR', oldOwner, i, e)
