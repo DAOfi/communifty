@@ -49,7 +49,8 @@ async function main() {
             gasPrice: ethers.utils.parseUnits(gasPrice, 'gwei')
           })
 
-          await tx.wait()
+          // await tx.wait()
+          await sleep(2000)
           console.log(tx.hash, oldOwner, i)
         } catch (e) {
           console.log('ERROR', oldOwner, i, e)
