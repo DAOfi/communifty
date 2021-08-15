@@ -109,10 +109,6 @@ contract CommuniftyNFT is ICommuniftyNFT, ERC721 {
       baseURI = baseURI_;
     }
 
-    function _baseURI() internal view override returns (string memory) {
-      return baseURI;
-    }
-
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
       require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
 
@@ -120,12 +116,12 @@ contract CommuniftyNFT is ICommuniftyNFT, ERC721 {
         return tokenURIs[tokenId];
       }
 
-      string memory baseURI_ = _baseURI();
-      return bytes(baseURI_).length > 0 ? string(abi.encodePacked(baseURI_, tokenId.toString())) : "";
+      return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
     }
 
     function setTokenURI(uint256 tokenId, string memory uri) external {
-      require(bytes(tokenURIs[tokenId]).length == 0, "Token URI already set");
+      require(msg.sender == pairOwner, 'FORBIDDEN_PAIR_OWNER');
+      require(bytes(tokenURIs[tokenId]).length == 0, "URI_ALREADY_SET");
       tokenURIs[tokenId] = uri;
     }
 
