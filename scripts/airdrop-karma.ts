@@ -41,7 +41,7 @@ async function main() {
     if (oldOwner !== newOwner && newOwner === wallet.address) {
       if (process.env.LIVE_RUN === 'true') {
         try {
-          // transfer holder balance
+          // transfer token
           const gasPrice = await getGasPrice()
           console.log('Current gas price:', gasPrice)
           const tx = await newToken.transferFrom(newOwner, oldOwner, i, {
