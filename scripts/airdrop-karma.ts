@@ -43,7 +43,7 @@ async function main() {
         try {
           // transfer holder balance
           const gasPrice = await getGasPrice()
-          const tx = await newToken.safeTransferFrom(newOwner, oldOwner, i, {
+          const tx = await newToken.transferFrom(newOwner, oldOwner, i, {
             gasLimit: 2e5,
             gasPrice: ethers.utils.parseUnits(gasPrice, 'gwei'),
           })
