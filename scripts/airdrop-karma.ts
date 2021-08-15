@@ -49,27 +49,14 @@ async function main() {
           })
 
           await tx.wait()
-          console.log(
-            tx.hash,
-            oldOwner,
-            i
-          )
+          console.log(tx.hash, oldOwner, i)
         } catch (e) {
-          console.log(
-            'ERROR',
-            oldOwner,
-            i,
-            e
-          )
+          console.log('ERROR', oldOwner, i, e)
         }
       } else {
         // simulate tx
         await sleep(2000)
-        console.log(
-          '0x0',
-          oldOwner,
-          i
-        )
+        console.log('0x0', oldOwner, i)
       }
     }
   }
