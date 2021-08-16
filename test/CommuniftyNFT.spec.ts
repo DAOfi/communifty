@@ -85,6 +85,20 @@ describe('CommuniftyNFT test all success and revert cases', () => {
         10,
         1,
         maxM,
+        0,
+        100
+      )
+    ).to.be.revertedWith('INVALID_N')
+    await expect(
+      Pair.deploy(
+        name,
+        symbol,
+        baseURI,
+        proxy,
+        wallet.address,
+        10,
+        1,
+        maxM,
         4,
         100
       )
@@ -342,6 +356,7 @@ describe('DAOfiV1Pair test curves with various settings', () => {
     [20, 1, 1, 1, 50, 10],
     [20, 2, 1e3, 2, 50, 5],
     [30, 35, 1, 3, 10, 20],
+    [367, 30000, 1, 1, 950, 0]
   ]
 
   curveTestCases.forEach((testData, i) => {

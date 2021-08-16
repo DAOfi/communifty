@@ -1,6 +1,6 @@
 import { Contract, ethers } from 'ethers'
 import { deployContract } from 'ethereum-waffle'
-import CommuniftyNFT from '../build/contracts/CommuniftyNFT.sol/CommuniftyNFT.json'
+import CommuniftyNFT from '../artifacts/contracts/CommuniftyNFT.sol/CommuniftyNFT.json'
 
 async function main() {
   const provider = new ethers.providers.JsonRpcProvider(
@@ -21,19 +21,19 @@ async function main() {
   console.log('Nonce:', nonce)
 
   const pair = await deployContract(
-    wallet,
+    wallet as any,
     CommuniftyNFT,
     [
-      'WGD21 NFT',
+      'Longest Day to Longest Day 2021-2022 Calendar',
       'WGD21',
       'ipfs://QmXePXc4BFGsHjQAS3BJvKfgQTdN62x2mQan4aQGUiDXf5/wgd21_metadata/',
       proxy,
       wallet.address,
       367, // tokens
-      60000, // start x
+      30000, // start x
       1, // m
-      1, // n
-      50, // fee
+      0, // n
+      950, // fee
     ],
     {
       gasLimit: 10000000,

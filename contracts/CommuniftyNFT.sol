@@ -61,7 +61,7 @@ contract CommuniftyNFT is ICommuniftyNFT, ERC721 {
     ) ERC721(_name, _symbol) {
         require(_initX > 0, 'ZERO_INIT_X');
         require(_m > 0 && _m <= SLOPE_DENOM, 'INVALID_M');
-        require(_n <= MAX_N, 'INVALID_N');
+        require(_n > 0 && _n <= MAX_N, 'INVALID_N');
         require(_ownerFee <= MAX_OWNER_FEE, 'INVALID_OWNER_FEE');
         priceAtX(_initX.add(_maxSupply)); // will revert if overflow
         _setBaseURI(_baseTokenURI);
