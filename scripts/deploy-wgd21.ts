@@ -32,7 +32,7 @@ async function main() {
       367, // tokens
       30000, // start x
       1, // m
-      0, // n
+      1, // n
       950, // fee
     ],
     {
