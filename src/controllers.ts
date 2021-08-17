@@ -1,5 +1,4 @@
 import { ethers } from 'ethers'
-import { network } from 'hardhat'
 import { Db, ObjectId } from 'mongodb'
 import { ContractModel, NetworkModel } from './models'
 
