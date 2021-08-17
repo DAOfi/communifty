@@ -1,22 +1,25 @@
 {
-  "name": "@daofi/daofi-v2",
-  "description": "Factory and Pair contracts for the DAOfi V2 protocol",
+  "name": "communifty",
+  "description": "Contracts and generative server for the Communifty NFT protocol",
   "version": "1.0.0",
-  "homepage": "https://daofi.org",
+  "homepage": "https://communifty.org",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DAOfi/daofi-v2"
+    "url": "https://github.com/DAOfi/communifty"
   },
   "keywords": [
     "nft",
     "dex",
     "ethereum",
     "dapp",
-    "daofi-v2"
+    "generative",
+    "art",
+    "communifty"
   ],
   "files": [
+    "artifacts",
     "contracts",
-    "build"
+    "src"
   ],
   "engines": {
     "node": ">=12"
@@ -26,6 +29,7 @@
     "@nomiclabs/hardhat-waffle": "2.0.1",
     "@openzeppelin/contracts": "4.2.0",
     "@types/chai": "4.2.21",
+    "@types/express": "4.17.13",
     "@types/mocha": "9.0.0",
     "@types/node": "16.6.1",
     "axios": "0.21.1",
@@ -41,8 +45,8 @@
     "typescript": "4.3.5"
   },
   "scripts": {
-    "lint": "yarn prettier ./test/*.ts ./scripts/*.ts --check",
-    "lint:fix": "yarn prettier ./test/*.ts ./scripts/*.ts --write",
+    "lint": "yarn prettier ./test/*.ts ./scripts/*.ts ./src/*.ts --check",
+    "lint:fix": "yarn prettier ./test/*.ts ./scripts/*.ts ./src/*.ts --write",
     "clean": "rimraf ./artifacts/",
     "precompile": "yarn clean",
     "compile": "npx hardhat compile",
@@ -50,5 +54,9 @@
     "test": "npx hardhat test",
     "prepublishOnly": "yarn test"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "express": "4.17.1",
+    "mongodb": "4.1.0"
+  }
 }

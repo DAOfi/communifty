@@ -356,7 +356,7 @@ describe('DAOfiV1Pair test curves with various settings', () => {
     [20, 1, 1, 1, 50, 10],
     [20, 2, 1e3, 2, 50, 5],
     [30, 35, 1, 3, 10, 20],
-    [367, 30000, 1, 1, 950, 0]
+    [367, 30000, 1, 1, 950, 0],
   ]
 
   curveTestCases.forEach((testData, i) => {

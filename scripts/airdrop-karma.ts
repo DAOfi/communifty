@@ -46,7 +46,7 @@ async function main() {
           console.log('Current gas price:', gasPrice)
           const tx = await newToken.transferFrom(newOwner, oldOwner, i, {
             gasLimit: 2e5,
-            gasPrice: ethers.utils.parseUnits(gasPrice, 'gwei')
+            gasPrice: ethers.utils.parseUnits(gasPrice, 'gwei'),
           })
 
           // await tx.wait()
