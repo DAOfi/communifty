@@ -51,18 +51,18 @@ async function main() {
         if (Controllers.hasOwnProperty(contract.controller)) {
           // Iterate networks, setup listeners
           for (const networkString in contract.networks) {
-            if (providers.hasOwnProperty(networkString)) {
+            if (wallets.hasOwnProperty(networkString)) {
               const network: NetworkModel = contract.networks[networkString]
               const instance = new ethers.Contract(
                 network.address,
                 CommuniftyNFT.abi,
-                providers[networkString]
+                wallets[networkString]
               )
               console.log('Created contract:', instance.address)
               // Listen for new events
               const controllerFunc: Controllers.ControllerFunc = (Controllers as any)[contract.controller]
               const controller = controllerFunc(
-                wallets[networkString],
+                instance,
                 db,
                 contract._id
               )

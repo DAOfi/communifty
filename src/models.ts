@@ -4,7 +4,7 @@ export interface TokenModel {
   id: number
   metaURL: string
   assetURL: string
-  createdAtBlock: number
+  transactionHash: string
   generativeMeta: any
 }
 
