@@ -60,11 +60,14 @@ async function main() {
               )
               console.log('Created contract:', instance.address)
               // Listen for new events
-              const controller = (Controllers as any)[contract.controller](
-                wallets[networkString]
+              const controllerFunc: Controllers.ControllerFunc = (Controllers as any)[contract.controller]
+              const controller = controllerFunc(
+                wallets[networkString],
+                db,
+                contract._id
               )
-              instance.on('Buy', (sender, price, id, to, event) => {
-                controller(event)
+              instance.on('Buy', async (sender, price, id, to, event) => {
+                await controller(event)
               })
               // Back-fill events up to latest block
               const blockNumber = await providers[
@@ -77,7 +80,7 @@ async function main() {
                   blockNumber
                 )) || []
               for (const event of logs) {
-                controller(event)
+                await controller(event)
               }
             } else {
               console.error('Invalid netork:', networkString)

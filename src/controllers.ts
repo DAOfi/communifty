@@ -1,8 +1,11 @@
 import { ethers } from 'ethers'
+import { Db, ObjectId } from 'mongodb'
 
-export function testController(wallet: ethers.Wallet) {
+export type ControllerFunc = (wallet: ethers.Wallet, db: Db, id: ObjectId) => (event: any) => void
+
+export function testController(wallet: ethers.Wallet, db: Db, id: ObjectId) {
   console.log('Creating testController')
-  return (event: any) => {
-    console.log('found event:', event)
+  return async (event: any) => {
+    console.log('found event:', await wallet.provider.getNetwork(), event)
   }
 }
