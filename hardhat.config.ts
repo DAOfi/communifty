@@ -5,12 +5,14 @@
 import "@nomiclabs/hardhat-waffle"
 
 export default {
-  solidity: "0.8.4",
-  settings: {
-    evmVersion: "berlin",
-    optimizer: {
-      enabled: true,
-      runs: 200
+  solidity: {
+    version: "0.8.4",
+    settings: {
+      evmVersion: "berlin",
+      optimizer: {
+        enabled: true,
+        runs: 200
+      }
     }
   }
 }
