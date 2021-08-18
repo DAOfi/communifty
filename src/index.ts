@@ -60,12 +60,10 @@ async function main() {
               )
               console.log('Created contract:', instance.address)
               // Listen for new events
-              const controllerFunc: Controllers.ControllerFunc = (Controllers as any)[contract.controller]
-              const controller = controllerFunc(
-                instance,
-                db,
-                contract._id
-              )
+              const controllerFunc: Controllers.ControllerFunc = (
+                Controllers as any
+              )[contract.controller]
+              const controller = controllerFunc(instance, db, contract._id)
               instance.on('Buy', async (sender, price, id, to, event) => {
                 await controller(event)
               })
