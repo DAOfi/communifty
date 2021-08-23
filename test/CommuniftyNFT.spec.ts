@@ -176,7 +176,7 @@ describe('CommuniftyNFT test all success and revert cases', () => {
     // successfully preMint up to gas limit
     let tx = await pair.preMint(503, wallet.address, { gasLimit: 15e6 })
     let receipt = await tx.wait()
-    expect(receipt.gasUsed).to.eq(13182802)
+    expect(receipt.gasUsed).to.eq(12897862)
   })
 
   it('will properly allow for switching pair owner and revert for bad params', async () => {
