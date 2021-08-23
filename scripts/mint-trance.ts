@@ -8,7 +8,7 @@ async function main() {
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY || '', provider)
   console.log('Wallet:', wallet.address)
 
-  const recipient = process.env.OWNER || wallet.address
+  const recipient = process.env.RECIPIENT || wallet.address
   const gas = process.env.GAS || '50'
 
   const nonce = await wallet.getTransactionCount()
