@@ -168,10 +168,11 @@ contract ScorpioNFT is IScorpioNFT, ERC721 {
     }
 
     function mint(uint projectId_, address to_) external payable override returns (uint tokenId_) {
+        require(projectToMaxTokenId[projectId_] > 0, "PROJECT_NOT_SETUP");
         require(projectToPreMint[projectId_] == false, "PREMINT_ENABLED");
         require(projectToCurrentTokenId[projectId_] < projectToMaxTokenId[projectId_], "MAX_SUPPLY_MINTED");
         uint mintPrice = projectToMintPrice[projectId_];
-        require(msg.value >= mintPrice, "INSUFFICIENT_VALUE");
+        require(msg.value >= mintPrice, "MINT_PRICE_NOT_MET");
         // Mint a new token to the recipient
         tokenId_ = _getNextTokenId();
         _mint(to_, tokenId_);
