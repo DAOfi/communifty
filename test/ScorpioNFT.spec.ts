@@ -82,44 +82,50 @@ describe('ScorpioNFT test all success and revert cases', () => {
     )
   })
 
-//   it('will allow preMint and revert preMint in all conditions', async () => {
-//     const wallet2 = (await ethers.getSigners())[1]
-//     // create normal token
-//     token = await NFT.deploy(
-//       name,
-//       symbol,
-//       wallet.address,
-//     )
-//     // attempt to setupProject from wallet 2
-//     token = await token.connect(wallet2)
-//     await expect(token.preMint(5, wallet2.address)).to.be.revertedWith(
-//       'OWNER_ONLY'
-//     )
-//     // switch back to wallet1
-//     token = await token.connect(wallet)
-//     // fail max supply
-//     await expect(token.preMint(11, wallet2.address)).to.be.revertedWith(
-//       'MAX_SUPPLY'
-//     )
-//     // successfully preMint
-//     await expect(token.preMint(5, wallet2.address))
-//       .to.emit(token, 'PreMint')
-//       .withArgs(5, wallet2.address)
-//     // successfully preMint again
-//     await expect(token.preMint(1, wallet2.address))
-//       .to.emit(token, 'PreMint')
-//       .withArgs(1, wallet2.address)
-//     // successfully buy
-//     const buyPrice = await token.buyPrice()
-//     await expect(token.buy(wallet.address, { value: buyPrice })).to.emit(
-//       token,
-//       'Buy'
-//     )
-//     // Fail with market open
-//     await expect(token.preMint(1, wallet2.address)).to.be.revertedWith(
-//       'MARKET_OPEN'
-//     )
-//   })
+  it('will allow preMint and revert preMint in all conditions', async () => {
+    const wallet2 = (await ethers.getSigners())[1]
+    // create normal token
+    token = await NFT.deploy(
+      name,
+      symbol,
+      wallet.address,
+    )
+    // successful setupProject call
+    await expect(token.setupProject(
+      1, 10000, expandToDecimals(69, 15), 50, wallet.address, baseURI
+    )).to.not.be.reverted
+    // attempt to preMint from wallet 2
+    token = await token.connect(wallet2)
+    await expect(token.preMint(1, 5, wallet2.address)).to.be.revertedWith(
+      'ONLY_OWNER'
+    )
+    await expect(token.disablePreMint(1)).to.be.revertedWith(
+      'ONLY_OWNER'
+    )
+    // switch back to wallet1
+    token = await token.connect(wallet)
+    // fail cases
+    await expect(token.preMint(2, 11, wallet2.address)).to.be.revertedWith(
+      'INVALID_PROJECT'
+    )
+    await expect(token.preMint(1, 10001, wallet2.address)).to.be.revertedWith(
+      'MAX_SUPPLY'
+    )
+    // successfully preMint
+    await expect(token.preMint(1, 5, wallet2.address))
+      .to.emit(token, 'PreMint')
+      .withArgs(1, wallet2.address, 5)
+    // successfully preMint again
+    await expect(token.preMint(1, 5, wallet2.address))
+      .to.emit(token, 'PreMint')
+      .withArgs(1, wallet2.address, 5)
+    // disable premint
+    await expect(token.disablePreMint(1)).to.not.be.reverted
+    // Fail with premint disabled
+    await expect(token.preMint(1, 5, wallet2.address)).to.be.revertedWith(
+      'PREMINT_DISABLED'
+    )
+  })
 
 //   it('will quantify upper limit preMint', async () => {
 //     // create normal token
