@@ -54,6 +54,10 @@ contract ScorpioNFT is IScorpioNFT, ERC721 {
         owner = owner_;
     }
 
+    function totalSupply() external view override returns (uint) {
+        return _internalTokenId;
+    }
+
     function setupProject(
         uint projectId_,
         uint maxTokenId_,
@@ -83,7 +87,7 @@ contract ScorpioNFT is IScorpioNFT, ERC721 {
         onlyOwner external override {
         require(projectToMaxTokenId[projectId_] > 0, "INVALID_PROJECT");
         require(
-            projectToCurrentTokenId[projectId_] + amount_ <= projectToMaxTokenId[projectId_],
+            projectToCurrentTokenId[projectId_].add(amount_) <= projectToMaxTokenId[projectId_],
             "MAX_SUPPLY"
         );
         require(projectToPreMint[projectId_], "PREMINT_DISABLED");

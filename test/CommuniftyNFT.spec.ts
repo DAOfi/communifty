@@ -345,7 +345,7 @@ describe('CommuniftyNFT test all success and revert cases', () => {
   })
 })
 
-describe('DAOfiV1Pair test curves with various settings', () => {
+describe('CommuniftyNFT test curves with various settings', () => {
   beforeEach(async () => {
     Pair = await ethers.getContractFactory('CommuniftyNFT')
     wallet = (await ethers.getSigners())[0]

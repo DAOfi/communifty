@@ -13,6 +13,7 @@ interface IScorpioNFT {
         address indexed to_
     );
 
+    function totalSupply() external view returns (uint);
     function internalTokenToProjectId(uint tokenId_) external view returns (uint);
     function internalTokenToProjectTokenId(uint tokenId_) external view returns (uint);
     function projectToCurrentTokenId(uint projectId_) external view returns (uint);
