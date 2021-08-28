@@ -48,10 +48,12 @@ contract ScorpioNFT is IScorpioNFT, ERC721 {
     constructor(
         string memory name_,
         string memory symbol_,
-        address owner_
+        address owner_,
+        address proxy_
     ) ERC721(name_, symbol_) {
         require(owner_ != address(0), "ZERO_OWNER");
         owner = owner_;
+        proxyRegistryAddress = proxy_;
     }
 
     function totalSupply() external view override returns (uint) {

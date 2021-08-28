@@ -23,14 +23,14 @@ describe('ScorpioNFT success and revert cases', () => {
 
   it('reverts for any bad parameter given to constructor', async () => {
     await expect(
-      NFT.deploy(name, symbol, ethers.constants.AddressZero)
+      NFT.deploy(name, symbol, ethers.constants.AddressZero, proxy)
     ).to.be.revertedWith('ZERO_OWNER')
   })
 
   it('will allow setupProject and revert setupProject in all conditions', async () => {
     const wallet2 = (await ethers.getSigners())[1]
     // create normal token
-    token = await NFT.deploy(name, symbol, wallet.address)
+    token = await NFT.deploy(name, symbol, wallet.address, proxy)
     // attempt to setupProject from wallet 2
     token = await token.connect(wallet2)
     await expect(
@@ -112,7 +112,7 @@ describe('ScorpioNFT success and revert cases', () => {
   it('will allow preMint and revert preMint in all conditions', async () => {
     const wallet2 = (await ethers.getSigners())[1]
     // create normal token
-    token = await NFT.deploy(name, symbol, wallet.address)
+    token = await NFT.deploy(name, symbol, wallet.address, proxy)
     // successful setupProject call
     await expect(
       token.setupProject(
@@ -156,7 +156,7 @@ describe('ScorpioNFT success and revert cases', () => {
   })
 
   it('will quantify upper limit preMint', async () => {
-    token = await NFT.deploy(name, symbol, wallet.address)
+    token = await NFT.deploy(name, symbol, wallet.address, proxy)
     await expect(
       token.setupProject(
         1,
@@ -175,7 +175,7 @@ describe('ScorpioNFT success and revert cases', () => {
 
   it('will allow for any caller to withdraw proceeds', async () => {
     const wallet2 = (await ethers.getSigners())[1]
-    token = await NFT.deploy(name, symbol, wallet.address)
+    token = await NFT.deploy(name, symbol, wallet.address, proxy)
     await expect(
       token.setupProject(
         1,
@@ -207,7 +207,7 @@ describe('ScorpioNFT success and revert cases', () => {
 
   it('will allow for any caller to withdraw proceeds to owner', async () => {
     const wallet2 = (await ethers.getSigners())[1]
-    token = await NFT.deploy(name, symbol, wallet.address)
+    token = await NFT.deploy(name, symbol, wallet.address, proxy)
     await expect(
       token.setupProject(
         1,
@@ -235,7 +235,7 @@ describe('ScorpioNFT success and revert cases', () => {
 
   it('will allow for any caller to withdraw royalties to recipient', async () => {
     const wallet2 = (await ethers.getSigners())[1]
-    token = await NFT.deploy(name, symbol, wallet.address)
+    token = await NFT.deploy(name, symbol, wallet.address, proxy)
     await expect(
       token.setupProject(
         1,
@@ -261,7 +261,7 @@ describe('ScorpioNFT success and revert cases', () => {
   })
 
   it('will allow/revert mint in all conditions', async () => {
-    token = await NFT.deploy(name, symbol, wallet.address)
+    token = await NFT.deploy(name, symbol, wallet.address, proxy)
     // un-setup
     let mintPrice = await token.projectToMintPrice(1)
     await expect(
@@ -310,7 +310,7 @@ describe('ScorpioNFT with multiple tokens using various settings', () => {
     signers = await ethers.getSigners()
     NFT = await ethers.getContractFactory('ScorpioNFT')
     wallet = signers[0]
-    token = await NFT.deploy(name, symbol, wallet.address)
+    token = await NFT.deploy(name, symbol, wallet.address, proxy)
   })
 
   // max tokens, price, fee, base URI, pre-mint amount
