@@ -19,24 +19,18 @@ async function main() {
     wallet
   )
   console.log('Scorpio contract:', token.address)
-  console.log('Setup project:', process.env.PROJECT_ID)
+  console.log('Enable project:', process.env.PROJECT_ID)
 
-  const setupTx = await token.setupProject(
+  const enableTx = await token.disablePreMint(
     parseInt(process.env.PROJECT_ID || '0'),
-    parseInt(process.env.MAX_TOKEN_ID || '0'),
-    ethers.utils.parseEther(process.env.PRICE || '0'),
-    parseInt(process.env.FEE || '0'),
-    process.env.RECIPIENT || wallet.address,
-    process.env.BASE_URI || '',
     {
       gasLimit: 10e6,
       gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
     }
   )
 
-
-  await setupTx.wait()
-  console.log('Setup tx:', setupTx.hash)
+  await enableTx.wait()
+  console.log('Enable tx:', enableTx.hash)
 }
 
 main()
