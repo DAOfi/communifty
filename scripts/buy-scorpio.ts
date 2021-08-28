@@ -19,22 +19,24 @@ async function main() {
     wallet
   )
   console.log('Scorpio contract:', token.address)
-  console.log('Pre-mint project:', process.env.PROJECT_ID)
-  console.log('Pre-mint amount:', process.env.MAX_TOKEN_ID)
-  console.log('Pre-mint recipient:', process.env.TO || wallet.address)
+  console.log('Buy project:', process.env.PROJECT_ID)
+  console.log('Buy recipient:', process.env.TO || wallet.address)
 
-  const mintTx = await token.preMint(
+  const mintPrice = await token.projectToMintPrice(parseInt(process.env.PROJECT_ID || '0'))
+  console.log('Buy price:', mintPrice.toString())
+
+  const buyTx = await token.mint(
     parseInt(process.env.PROJECT_ID || '0'),
-    parseInt(process.env.MAX_TOKEN_ID || '0'),
     process.env.TO || wallet.address,
     {
+      value: mintPrice,
       gasLimit: 10e6,
       gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
     }
   )
 
-  await mintTx.wait()
-  console.log('Pre-mint tx:', mintTx.hash)
+  await buyTx.wait()
+  console.log('Buy tx:', buyTx.hash)
 }
 
 main()
