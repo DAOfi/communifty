@@ -22,13 +22,13 @@ async function main() {
     wallet as any,
     ScorpioNFT,
     [
-      'Scorpio',
-      'SCRPIO',
-      wallet.address,
+      'scorpio.world',
+      'SCORPIO',
+      '0x0F4c052c507Aa2a84369EF1551cD7299f91a4fBf',
       proxy,
     ],
     {
-      gasLimit: 10e6,
+      gasLimit: 3e6,
       gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
       nonce,
     }
