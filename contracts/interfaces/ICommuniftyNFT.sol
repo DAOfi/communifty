@@ -20,14 +20,24 @@ interface ICommuniftyNFT {
         uint256 tokenId,
         address indexed to
     );
+
     function buyPrice() external view returns (uint256);
+
     function sellPrice() external view returns (uint256);
+
     function setPairOwner(address payable) external;
+
     function signalClose() external;
+
     function close() external;
+
     function withdrawOwnerFees() external;
+
     function withdrawPlatformFees() external;
+
     function preMint(uint256 count, address to) external;
+
     function buy(address payable to) external payable returns (uint256);
+
     function sell(uint256 tokenId, address payable to) external;
 }

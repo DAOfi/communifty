@@ -16,7 +16,9 @@ async function main() {
   console.log('Function:', process.env.FUNCTION)
   console.log('Args:', process.env.ARGS)
 
-  const result = await token[process.env.FUNCTION || ''](...JSON.parse(process.env.ARGS || '[]'))
+  const result = await token[process.env.FUNCTION || ''](
+    ...JSON.parse(process.env.ARGS || '[]')
+  )
 
   console.log('Result:', result)
 }

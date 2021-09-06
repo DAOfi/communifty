@@ -22,7 +22,9 @@ async function main() {
   console.log('Buy project:', process.env.PROJECT_ID)
   console.log('Buy recipient:', process.env.TO || wallet.address)
 
-  const mintPrice = await token.projectToMintPrice(parseInt(process.env.PROJECT_ID || '0'))
+  const mintPrice = await token.projectToMintPrice(
+    parseInt(process.env.PROJECT_ID || '0')
+  )
   console.log('Buy price:', mintPrice.toString())
 
   const buyTx = await token.mint(

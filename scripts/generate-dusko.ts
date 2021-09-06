@@ -91,12 +91,8 @@ for (let i = 0; i < numTokens; ++i) {
   const metadata = {
     name: 'DUSKO',
     description: descriptions[i],
-    image: `ipfs://QmW3wpFEqaiqfGJz5wWeiFW3wDMNe7RXya1ks6DHQeiurj/${
-      i + 1
-    }.jpg`,
-    attributes: [
-      { trait_type: 'DUSKO', value: `Category: ${categories[i]}` },
-    ],
+    image: `ipfs://QmW3wpFEqaiqfGJz5wWeiFW3wDMNe7RXya1ks6DHQeiurj/${i + 1}.jpg`,
+    attributes: [{ trait_type: 'DUSKO', value: `Category: ${categories[i]}` }],
   }
   fs.writeFileSync(`dusko_metadata/${i + 1}`, JSON.stringify(metadata))
 }

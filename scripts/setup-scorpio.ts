@@ -34,7 +34,6 @@ async function main() {
     }
   )
 
-
   await setupTx.wait()
   console.log('Setup tx:', setupTx.hash)
 }
