@@ -24,7 +24,7 @@ async function main() {
     [
       'scorpio.world',
       'SCORPIO',
-      '0x0F4c052c507Aa2a84369EF1551cD7299f91a4fBf',
+      process.env.OWNER || '0x8b2448c75945E6531E2906B76fa3B06670e19229',
       proxy,
     ],
     {

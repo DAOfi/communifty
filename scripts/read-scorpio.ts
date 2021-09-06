@@ -7,7 +7,7 @@ async function main() {
   )
 
   const token = new ethers.Contract(
-    process.env.CONTRACT || '0x5a2BE6CF65A2F019183058Cb8eBe828834F40dE6',
+    process.env.CONTRACT || '0x4b349A4DA4A9D9a508c3BA45D4195ba0B8a42275',
     ScorpioNFT.abi,
     provider
   )
