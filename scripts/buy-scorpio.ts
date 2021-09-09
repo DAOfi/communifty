@@ -34,6 +34,7 @@ async function main() {
       value: mintPrice,
       gasLimit: 10e6,
       gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
+      nonce
     }
   )
 
