@@ -105,7 +105,7 @@ const meta: any[] = [
 
 
 for (let i = 0; i < numTokens; ++i) {
-  const filename = `BLOCK_${meta[i].block.split(' ')[0].toUpperCase()}_${meta[i].name.replace('Hashflower ', '')}_${meta[i].scale.toUpperCase()}.mp4`
+  const filename = `BLOCK_${meta[i].block.split(' ')[0].toUpperCase()}_${meta[i].name.replace('Hashflower ', '')}_${meta[i].scale.toUpperCase().replace(' ', '_')}.mp4`
   const metadata = {
     name: meta[i].name,
     melody: meta[i].melody,
