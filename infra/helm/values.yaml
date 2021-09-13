@@ -1,0 +1,8 @@
+namespace: default
+label: nft-server
+replicaCount: 1
+env: development
+image:
+  name: nft-server
+  repo: gcr.io/daofi-dev/nft-server
+  tag: latest

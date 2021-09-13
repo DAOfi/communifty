@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ .Values.label }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.label }}
+  revisionHistoryLimit: 10
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.label }}
+    spec:
+      containers:
+        - name: {{ .Values.label }}
+          image: "{{ .Values.image.repo }}:{{ .Values.image.tag }}"
+          env:
+            - name: NODE_ENV
+              value: {{ .Values.env }}
+            - name: MONGO_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo
+                  key: secret
+            - name: INFURA_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: infura-1
+                  key: secret
+            - name: PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: eth-1
+                  key: secret
+            - name: ETHERSCAN_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: etherscan-1
+                  key: secret
+

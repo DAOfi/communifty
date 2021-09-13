@@ -1,0 +1,4 @@
+apiVersion: v1
+description: Relay server for DAOfi app
+name: nft-server
+version: v1
