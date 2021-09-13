@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 COPY package.json ./
 COPY yarn.lock ./
 RUN yarn install
-RUN yarn compile
 COPY . .
+RUN yarn compile
 
 CMD [ "yarn", "start" ]
