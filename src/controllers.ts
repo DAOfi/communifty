@@ -1,12 +1,27 @@
 import { ethers } from 'ethers'
 import { Db, ObjectId } from 'mongodb'
-import { ContractModel, NetworkModel } from './models'
+import { ProjectModel, TokenModel } from './models'
+
+const p5 = require('node-p5')
 
 export type ControllerFunc = (
   contract: ethers.Contract,
   db: Db,
   id: ObjectId
 ) => (event: any) => void
+
+let canvas: any
+let generativeMeta = { testMeta: 'something' }
+
+function sketch(p: any) {
+  p.setup = () => {
+    canvas = p.createCanvas(200, 200);
+  }
+  p.draw = () => {
+    p.background(50);
+    p.text('hello world!', 50, 100);
+  }
+}
 
 export const testController: ControllerFunc = (
   contract: ethers.Contract,
@@ -15,47 +30,45 @@ export const testController: ControllerFunc = (
 ) => {
   console.log('Creating testController')
   return async (event: any) => {
-    const network = await contract.provider.getNetwork()
     const doc = (await db
-      .collection('contracts')
-      .findOne({ _id: id })) as ContractModel
+      .collection('projects')
+      .findOne({ _id: id })) as ProjectModel
     console.log(
       'got event:',
-      network.name,
       event.address,
       event.transactionHash
     )
     if (doc) {
-      if (doc.networks.hasOwnProperty(network.name)) {
-        const model: NetworkModel = doc.networks[network.name]
-        const tokenId = event.args['tokenId'].toString()
-        if (!model.tokens || !model.tokens.hasOwnProperty(tokenId)) {
-          console.log(
-            'populating tokenId:',
-            network.name,
-            event.address,
-            tokenId
-          )
-          // Do the generative thing
-          // await contract.setTokenURI(parseInt(tokenId), '')
-          await db.collection('contracts').updateOne(
-            { _id: id },
-            {
-              $set: {
-                [`networks.${network.name}.lastBlock`]: event.blockNumber,
-                [`networks.${network.name}.tokens.${tokenId}`]: {
-                  id: tokenId,
-                  transactionHash: event.transactionHash,
-                  metaURL: 'ipfs://',
-                  assetURL: 'ipfs://',
-                  generativeMeta: {
-                    testData: 'test',
-                  },
-                },
-              },
-            }
-          )
+      const tokenId = event.args['tokenId_'].toNumber()
+      if (!doc.tokens || !doc.tokens.hasOwnProperty(tokenId)) {
+        console.log(
+          'populating tokenId:',
+          event.address,
+          tokenId
+        )
+        // Do the generative thing
+        const instance = p5.createSketch(sketch)
+        await instance.saveFrames(canvas, `${tokenId}`, { repeat: 1, quality: 10 }, 1, 1)
+        // Upload to IPFS
+        // TODO
+        // await contract.setTokenURI(parseInt(tokenId), '')
+        let token: TokenModel = {
+          tokenId,
+          projectTokenId: event.args['projectTokenId_'].toNumber(),
+          tokenURI: 'ipfs://',
+          image: 'ipfs://',
+          transactionHash: event.transactionHash,
+          generativeMeta
         }
+        await db.collection('projects').updateOne(
+          { _id: id },
+          {
+            $set: {
+              lastBlock: event.blockNumber,
+              [`tokens.${tokenId}`]: token
+            },
+          }
+        )
       }
     }
   }

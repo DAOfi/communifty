@@ -1,21 +1,19 @@
 import { ObjectId } from 'mongodb'
 
 export interface TokenModel {
-  id: number
-  metaURL: string
-  assetURL: string
+  tokenId: number
+  projectTokenId: number
+  tokenURI: string
+  image: string
   transactionHash: string
   generativeMeta: any
 }
 
-export interface NetworkModel {
-  address: string
+export interface ProjectModel {
+  _id: ObjectId
+  projectId: number
+  network: string
+  controller: string
   lastBlock: number
   tokens: { [key: string]: TokenModel }
-}
-
-export interface ContractModel {
-  _id: ObjectId
-  controller: string
-  networks: { [key: string]: NetworkModel }
 }
