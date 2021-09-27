@@ -6,7 +6,15 @@ import * as Controllers from './controllers'
 import { ProjectModel } from './models'
 
 const app = express()
-const requiredEnv = ['MONGO_PWD', 'INFURA_KEY', 'PRIVATE_KEY', 'ETHERSCAN_KEY', 'CONTRACT', 'NETWORK']
+const requiredEnv = [
+  'MONGO_PWD',
+  'INFURA_KEY',
+  'PRIVATE_KEY',
+  'ETHERSCAN_KEY',
+  'CONTRACT',
+  'NETWORK',
+  'JWT',
+]
 
 requiredEnv.forEach((env) => {
   if (!process.env[env]) {
@@ -18,9 +26,10 @@ requiredEnv.forEach((env) => {
 const client = new MongoClient(
   `mongodb+srv://daofi:${process.env.MONGO_PWD}@cluster0.qjd1i.mongodb.net/daofi?retryWrites=true&w=majority`
 )
-const provider: ethers.providers.JsonRpcProvider = new ethers.providers.JsonRpcProvider(
-  `https://${process.env.NETWORK}.infura.io/v3/${process.env.INFURA_KEY}`
-);
+const provider: ethers.providers.JsonRpcProvider =
+  new ethers.providers.JsonRpcProvider(
+    `https://${process.env.NETWORK}.infura.io/v3/${process.env.INFURA_KEY}`
+  )
 const wallet: ethers.Wallet = new ethers.Wallet(
   process.env.PRIVATE_KEY || '',
   provider
@@ -32,7 +41,6 @@ const contract: ethers.Contract = new ethers.Contract(
 )
 console.log('Connected contract', process.env.NETWORK, contract.address)
 const controllers: { [key: number]: (event: any) => void } = {}
-
 
 async function main() {
   const db: Db = (await client.connect()).db('scorpio')
@@ -46,12 +54,19 @@ async function main() {
     } else if (items) {
       for (const entry of items) {
         const project = entry as ProjectModel
-        if (Controllers.hasOwnProperty(project.controller) && project.network === process.env.NETWORK) {
+        if (
+          Controllers.hasOwnProperty(project.controller) &&
+          project.network === process.env.NETWORK
+        ) {
           // Setup controller
           const controllerFunc: Controllers.ControllerFunc = (
             Controllers as any
           )[project.controller]
-          controllers[project.projectId] = controllerFunc(contract, db, project._id)
+          controllers[project.projectId] = controllerFunc(
+            contract,
+            db,
+            project._id
+          )
           // Back-fill events up to latest block
           const blockNumber = await provider.getBlockNumber()
           const logs =
@@ -71,11 +86,14 @@ async function main() {
         }
       }
       // Listen for mint events and route to project controller
-      contract.on('Mint', async (projectId, tokenId, projectTokenId, price, to, event) => {
-        if (controllers.hasOwnProperty(projectId.toNumber())) {
-          await controllers[projectId.toNumber()](event)
+      contract.on(
+        'Mint',
+        async (projectId, tokenId, projectTokenId, price, to, event) => {
+          if (controllers.hasOwnProperty(projectId.toNumber())) {
+            await controllers[projectId.toNumber()](event)
+          }
         }
-      })
+      )
     }
   })
 }

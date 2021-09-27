@@ -49,4 +49,7 @@ spec:
                 secretKeyRef:
                   name: etherscan-1
                   key: secret
-
+            - name: JWT
+                secretKeyRef:
+                  name: jwt-1
+                  key: secret

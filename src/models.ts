@@ -4,9 +4,8 @@ export interface TokenModel {
   tokenId: number
   projectTokenId: number
   tokenURI: string
-  image: string
   transactionHash: string
-  generativeMeta: any
+  meta: any
 }
 
 export interface ProjectModel {
