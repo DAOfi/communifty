@@ -50,6 +50,7 @@ spec:
                   name: etherscan-1
                   key: secret
             - name: JWT
+              valueFrom:
                 secretKeyRef:
                   name: jwt-1
                   key: secret
