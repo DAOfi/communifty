@@ -42,6 +42,7 @@ function sketch(p: any) {
   }
 }
 
+// TODO pass in sketch function
 export const testController: ControllerFunc = (
   contract: ethers.Contract,
   db: Db,
@@ -60,6 +61,7 @@ export const testController: ControllerFunc = (
         try {
           // Do the generative thing
           const instance = p5.createSketch(sketch)
+          // TODO make this configuraable
           await instance.saveFrames(
             canvas,
             `${tokenId}`,
@@ -70,6 +72,7 @@ export const testController: ControllerFunc = (
           const file = fs.createReadStream(`${tokenId}/${tokenId}.gif`)
           // Upload image to IPFS
           const imgData = new FormData()
+          // TODO override filename
           imgData.append('file', file)
           const ipfsImage = await axios.post(
             'https://api.pinata.cloud/pinning/pinFileToIPFS',
@@ -85,6 +88,7 @@ export const testController: ControllerFunc = (
           // Set image URI
           console.log('ipfs image result:', ipfsImage.data)
           meta.image = `ipfs://${ipfsImage.data.IpfsHash}`
+          // TODO external URL
           // Upload json to IPFS
           const jsonBody = {
             /* The "pinataMetadata" object will not be part of your content added to IPFS */
@@ -94,7 +98,8 @@ export const testController: ControllerFunc = (
             //   customPinPolicy: (custom pin policy for this json)
             // },
             pinataMetadata: {
-              name: `${tokenId}.json`
+              // TODO similar filename as image
+              name: `${tokenId}.json`,
               // keyvalues: {
               //     customKey: customValue,
               //     customKey2: customValue2
@@ -103,7 +108,7 @@ export const testController: ControllerFunc = (
             /* The contents of the "pinataContent" object will be added to IPFS */
             /* The hash provided back will only represent the JSON contained in this object */
             /* The JSON the returned hash links to will NOT contain the "pinataMetadata" object above */
-            pinataContent: meta
+            pinataContent: meta,
           }
           const ipfsJSON = await axios.post(
             'https://api.pinata.cloud/pinning/pinJSONToIPFS',

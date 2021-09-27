@@ -54,35 +54,40 @@ async function main() {
     } else if (items) {
       for (const entry of items) {
         const project = entry as ProjectModel
-        if (
-          Controllers.hasOwnProperty(project.controller) &&
-          project.network === process.env.NETWORK
-        ) {
-          // Setup controller
-          const controllerFunc: Controllers.ControllerFunc = (
-            Controllers as any
-          )[project.controller]
-          controllers[project.projectId] = controllerFunc(
-            contract,
-            db,
-            project._id
-          )
-          // Back-fill events up to latest block
-          const blockNumber = await provider.getBlockNumber()
-          const logs =
-            (await contract.queryFilter(
-              contract.filters.Mint(),
-              project.lastBlock,
-              blockNumber
-            )) || []
-          for (const event of logs) {
-            let projectId = event.args?.projectId_.toNumber()
-            if (controllers.hasOwnProperty(projectId)) {
-              await controllers[projectId](event)
+        if (project.network === process.env.NETWORK) {
+          if (Controllers.hasOwnProperty(project.controller)) {
+            // Setup controller
+            const controllerFunc: Controllers.ControllerFunc = (
+              Controllers as any
+            )[project.controller]
+            controllers[project.projectId] = controllerFunc(
+              contract,
+              db,
+              project._id
+            )
+            // Back-fill events up to latest block
+            const blockNumber = await provider.getBlockNumber()
+            const logs =
+              (await contract.queryFilter(
+                contract.filters.Mint(),
+                project.lastBlock,
+                blockNumber
+              )) || []
+            for (const event of logs) {
+              let projectId = event.args?.projectId_.toNumber()
+              if (controllers.hasOwnProperty(projectId)) {
+                await controllers[projectId](event)
+              }
             }
+          } else {
+            console.error(
+              'Invalid controller:',
+              project.projectId,
+              project.controller
+            )
           }
         } else {
-          console.error('Invalid controller:', project.controller)
+          console.warn('Invalid network:', project.projectId, project.network)
         }
       }
       // Listen for mint events and route to project controller
