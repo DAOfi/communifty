@@ -89,7 +89,11 @@ export const nodeP5Controller: ControllerFunc = (
 
           if (viewObj.data.isPng) {
             // Upload png to IPFS
-            const file = fs.createReadStream(`${tokenId}/frame-${(viewObj.data.frameRate * viewObj.data.duration) - 1}.png`)
+            const file = fs.createReadStream(
+              `${tokenId}/frame-${
+                viewObj.data.frameRate * viewObj.data.duration - 1
+              }.png`
+            )
             const imgData = new FormData()
             imgData.append(
               'file',
@@ -150,7 +154,10 @@ export const nodeP5Controller: ControllerFunc = (
               }
             )
             await tx.wait()
-            console.log(`setTokenURI ${tokenId} ipfs://${ipfsJSON.data.IpfsHash}`, tx.hash)
+            console.log(
+              `setTokenURI ${tokenId} ipfs://${ipfsJSON.data.IpfsHash}`,
+              tx.hash
+            )
             // Update the DB
             let token: TokenModel = {
               tokenId,
@@ -163,7 +170,7 @@ export const nodeP5Controller: ControllerFunc = (
               { _id: id },
               {
                 $set: {
-                  lastBlock: event.blockNumber + 1,
+                  lastBlock: event.blockNumber,
                   [`tokens.${tokenId}`]: token,
                 },
               }

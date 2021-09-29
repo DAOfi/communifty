@@ -31,7 +31,7 @@ export const gabbyDavis: ViewFunc = (
     frameRate: 1,
     isPng: true,
     appendGif: true,
-    test: true
+    test: true,
   }
   const sketch = (p: any) => {
     data.meta = {}
@@ -54,6 +54,6 @@ export const gabbyDavis: ViewFunc = (
 
   return {
     data,
-    sketch
+    sketch,
   }
 }
