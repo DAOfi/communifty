@@ -15,4 +15,5 @@ export interface ProjectModel {
   controller: string
   lastBlock: number
   tokens: { [key: string]: TokenModel }
+  view: string
 }
