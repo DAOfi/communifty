@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import express from 'express'
 import { Db, MongoClient } from 'mongodb'
+import zmq from 'zeromq'
 import ScorpioNFT from '../artifacts/contracts/ScorpioNFT.sol/ScorpioNFT.json'
 import * as Controllers from './controllers'
 import { ProjectModel } from './models'
@@ -22,6 +23,11 @@ requiredEnv.forEach((env) => {
     process.exit(1)
   }
 })
+
+const port = process.env.PORT || 3030
+const sock = zmq.socket('pub')
+sock.bindSync(`tcp://*:${port}`)
+console.log('zmq publishing on port', port)
 
 const client = new MongoClient(
   `mongodb+srv://daofi:${process.env.MONGO_PWD}@cluster0.qjd1i.mongodb.net/daofi?retryWrites=true&w=majority`
@@ -45,7 +51,7 @@ const controllers: { [key: number]: (event: any) => void } = {}
 async function main() {
   const db: Db = (await client.connect()).db('scorpio')
   console.info('Conntected to Db scorpio')
-  // Get list of contracts and iterate
+  // Get list of projects and iterate
   const projects = db.collection('projects')
   projects.find({}).toArray(async (err, items) => {
     if (err) {
@@ -55,36 +61,21 @@ async function main() {
       for (const entry of items) {
         const project = entry as ProjectModel
         if (project.network === process.env.NETWORK) {
-          if (Controllers.hasOwnProperty(project.controller)) {
-            // Setup controller
-            const controllerFunc: Controllers.ControllerFunc = (
-              Controllers as any
-            )[project.controller]
-            controllers[project.projectId] = controllerFunc(
-              contract,
-              db,
-              project._id
-            )
-            // Back-fill events up to latest block
-            const blockNumber = await provider.getBlockNumber()
-            const logs =
-              (await contract.queryFilter(
-                contract.filters.Mint(),
-                project.lastBlock,
-                blockNumber
-              )) || []
-            for (const event of logs) {
-              let projectId = event.args?.projectId_.toNumber()
-              if (controllers.hasOwnProperty(projectId)) {
-                await controllers[projectId](event)
-              }
-            }
-          } else {
-            console.error(
-              'Invalid controller:',
-              project.projectId,
-              project.controller
-            )
+          // Back-fill events up to latest block
+          const blockNumber = await provider.getBlockNumber()
+          const logs =
+            (await contract.queryFilter(
+              contract.filters.Mint(),
+              project.lastBlock,
+              blockNumber
+            )) || []
+          for (const event of logs) {
+            let projectId = event.args?.projectId_.toNumber()
+            sock.send([
+              projectId.toString(),
+              JSON.stringify(event)
+            ])
+            console.log('backfill event', event.address, event.transactionHash)
           }
         } else {
           console.warn('Invalid network:', project.projectId, project.network)
@@ -94,9 +85,11 @@ async function main() {
       contract.on(
         'Mint',
         async (projectId, tokenId, projectTokenId, price, to, event) => {
-          if (controllers.hasOwnProperty(projectId.toNumber())) {
-            await controllers[projectId.toNumber()](event)
-          }
+          sock.send([
+            projectId.toNumber().toString(),
+            JSON.stringify(event)
+          ])
+          console.log('live event', event.address, event.transactionHash)
         }
       )
     }
