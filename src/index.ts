@@ -3,7 +3,6 @@ import express from 'express'
 import { Db, MongoClient } from 'mongodb'
 import zmq from 'zeromq'
 import ScorpioNFT from '../artifacts/contracts/ScorpioNFT.sol/ScorpioNFT.json'
-import * as Controllers from './controllers'
 import { ProjectModel } from './models'
 
 const app = express()
@@ -48,6 +47,18 @@ const contract: ethers.Contract = new ethers.Contract(
 console.log('Connected contract', process.env.NETWORK, contract.address)
 const controllers: { [key: number]: (event: any) => void } = {}
 
+function parseEvent(event: ethers.Event) {
+  const ret: any = {
+    address: event.address,
+    transactionHash: event.transactionHash,
+    args: {}
+  }
+  for (let key in event.args) {
+    ret.args[key] = event.args[key].toString()
+  }
+  return JSON.stringify(ret)
+}
+
 async function main() {
   const db: Db = (await client.connect()).db('scorpio')
   console.info('Conntected to Db scorpio')
@@ -73,7 +84,7 @@ async function main() {
             let projectId = event.args?.projectId_.toNumber()
             sock.send([
               projectId.toString(),
-              JSON.stringify(event)
+              parseEvent(event)
             ])
             console.log('backfill event', event.address, event.transactionHash)
           }
@@ -87,7 +98,7 @@ async function main() {
         async (projectId, tokenId, projectTokenId, price, to, event) => {
           sock.send([
             projectId.toNumber().toString(),
-            JSON.stringify(event)
+            parseEvent(event)
           ])
           console.log('live event', event.address, event.transactionHash)
         }
