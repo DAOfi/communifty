@@ -1,0 +1,3 @@
+env: production
+contract: 0x2e2691819d3441994e9709e776bd77d08cd9e89b
+network: mainnet
