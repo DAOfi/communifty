@@ -26,9 +26,9 @@ spec:
             - name: NODE_ENV
               value: {{ .Values.env }}
             - name: CONTRACT
-              value: '0x2e2691819d3441994e9709e776bd77d08cd9e89b'
+              value: {{ .Values.contract }}
             - name: NETWORK
-              value: 'mainnet'
+              value: {{ .Values.network }}
             - name: MONGO_PWD
               valueFrom:
                 secretKeyRef:
@@ -38,19 +38,4 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: infura-1
-                  key: secret
-            - name: PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: eth-1
-                  key: secret
-            - name: ETHERSCAN_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: etherscan-1
-                  key: secret
-            - name: JWT
-              valueFrom:
-                secretKeyRef:
-                  name: jwt-1
                   key: secret

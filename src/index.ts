@@ -9,11 +9,8 @@ const app = express()
 const requiredEnv = [
   'MONGO_PWD',
   'INFURA_KEY',
-  'PRIVATE_KEY',
-  'ETHERSCAN_KEY',
   'CONTRACT',
   'NETWORK',
-  'JWT',
 ]
 
 requiredEnv.forEach((env) => {
@@ -35,17 +32,12 @@ const provider: ethers.providers.JsonRpcProvider =
   new ethers.providers.JsonRpcProvider(
     `https://${process.env.NETWORK}.infura.io/v3/${process.env.INFURA_KEY}`
   )
-const wallet: ethers.Wallet = new ethers.Wallet(
-  process.env.PRIVATE_KEY || '',
-  provider
-)
 const contract: ethers.Contract = new ethers.Contract(
   process.env.CONTRACT || '',
   ScorpioNFT.abi,
-  wallet
+  provider
 )
 console.log('Connected contract', process.env.NETWORK, contract.address)
-const controllers: { [key: number]: (event: any) => void } = {}
 
 function parseEvent(event: ethers.Event) {
   const ret: any = {
