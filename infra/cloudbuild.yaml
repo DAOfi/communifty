@@ -34,7 +34,7 @@ steps:
     args: [
       'upgrade',
       '--install',
-      '-f', 'values.yaml',
+      '-f', '${_ENV}.yaml',
       '--set', 'image.tag=$COMMIT_SHA',
       'nft-server',
       '.'
