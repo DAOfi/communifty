@@ -2,8 +2,8 @@ namespace: default
 label: nft-server
 replicaCount: 1
 env: development
-contract: 0x2e2691819d3441994e9709e776bd77d08cd9e89b
-network: mainnet
+contract: 0x4b349A4DA4A9D9a508c3BA45D4195ba0B8a42275
+network: rinkeby
 image:
   name: nft-server
   repo: gcr.io/daofi-dev/nft-server

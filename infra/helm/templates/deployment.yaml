@@ -7,7 +7,7 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.label }}
+      app: "{{ .Values.label }}-{{ .Values.env }}"
   revisionHistoryLimit: 10
   strategy:
     rollingUpdate:
@@ -17,10 +17,10 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ .Values.label }}
+        app: "{{ .Values.label }}-{{ .Values.env }}"
     spec:
       containers:
-        - name: {{ .Values.label }}
+        - name: {{ .Values.image.name }}
           image: "{{ .Values.image.repo }}:{{ .Values.image.tag }}"
           env:
             - name: NODE_ENV
