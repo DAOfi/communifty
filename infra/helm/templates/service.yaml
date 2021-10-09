@@ -15,4 +15,4 @@ spec:
       targetPort: 3030
       protocol: TCP
   selector:
-    app: {{ .Values.label }}
+    app: "{{ .Values.label }}-{{ .Values.env }}"
