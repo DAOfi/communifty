@@ -6,12 +6,7 @@ import ScorpioNFT from '../artifacts/contracts/ScorpioNFT.sol/ScorpioNFT.json'
 import { ProjectModel } from './models'
 
 const app = express()
-const requiredEnv = [
-  'MONGO_PWD',
-  'INFURA_KEY',
-  'CONTRACT',
-  'NETWORK',
-]
+const requiredEnv = ['MONGO_PWD', 'INFURA_KEY', 'CONTRACT', 'NETWORK']
 
 requiredEnv.forEach((env) => {
   if (!process.env[env]) {
@@ -45,7 +40,7 @@ function parseEvent(event: ethers.Event) {
     blockHash: event.blockHash,
     blockNumber: event.blockNumber,
     transactionHash: event.transactionHash,
-    args: {}
+    args: {},
   }
   for (let key in event.args) {
     ret.args[key] = event.args[key].toString()
@@ -76,10 +71,7 @@ async function main() {
             )) || []
           for (const event of logs) {
             let projectId = event.args?.projectId_.toNumber()
-            sock.send([
-              projectId.toString(),
-              parseEvent(event)
-            ])
+            sock.send([projectId.toString(), parseEvent(event)])
             console.log('backfill event', event.address, event.transactionHash)
           }
         } else {
@@ -90,10 +82,7 @@ async function main() {
       contract.on(
         'Mint',
         async (projectId, tokenId, projectTokenId, price, to, event) => {
-          sock.send([
-            projectId.toNumber().toString(),
-            parseEvent(event)
-          ])
+          sock.send([projectId.toNumber().toString(), parseEvent(event)])
           console.log('live event', event.address, event.transactionHash)
         }
       )
