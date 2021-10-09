@@ -42,6 +42,8 @@ console.log('Connected contract', process.env.NETWORK, contract.address)
 function parseEvent(event: ethers.Event) {
   const ret: any = {
     address: event.address,
+    blockHash: event.blockHash,
+    blockNumber: event.blockNumber,
     transactionHash: event.transactionHash,
     args: {}
   }
