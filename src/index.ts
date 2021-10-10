@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import express, { Request, NextFunction } from 'express'
+import express, { Request } from 'express'
 import { Db, MongoClient } from 'mongodb'
 import zmq from 'zeromq'
 import ScorpioNFT from '../artifacts/contracts/ScorpioNFT.sol/ScorpioNFT.json'
