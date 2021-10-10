@@ -39,3 +39,8 @@ spec:
                 secretKeyRef:
                   name: infura-1
                   key: secret
+            - name: JWT
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-1
+                  key: secret
