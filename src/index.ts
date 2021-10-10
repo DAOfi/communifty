@@ -1,12 +1,13 @@
 import { ethers } from 'ethers'
-import express from 'express'
+import express, { Request, NextFunction } from 'express'
 import { Db, MongoClient } from 'mongodb'
 import zmq from 'zeromq'
 import ScorpioNFT from '../artifacts/contracts/ScorpioNFT.sol/ScorpioNFT.json'
 import { ProjectModel } from './models'
 
 const app = express()
-const requiredEnv = ['MONGO_PWD', 'INFURA_KEY', 'CONTRACT', 'NETWORK']
+const requiredEnv = ['MONGO_PWD', 'INFURA_KEY', 'CONTRACT', 'NETWORK', 'JWT']
+let db: Db
 
 requiredEnv.forEach((env) => {
   if (!process.env[env]) {
@@ -48,9 +49,7 @@ function parseEvent(event: ethers.Event) {
   return JSON.stringify(ret)
 }
 
-async function main() {
-  const db: Db = (await client.connect()).db('scorpio')
-  console.info('Conntected to Db scorpio')
+async function backfill(overrideBlock?: number) {
   // Get list of projects and iterate
   const projects = db.collection('projects')
   projects.find({}).toArray(async (err, items) => {
@@ -66,33 +65,51 @@ async function main() {
           const logs =
             (await contract.queryFilter(
               contract.filters.Mint(),
-              project.lastBlock,
+              overrideBlock || project.lastBlock,
               blockNumber
             )) || []
           for (const event of logs) {
-            let projectId = event.args?.projectId_.toNumber()
-            sock.send([projectId.toString(), parseEvent(event)])
-            console.log('backfill event', event.address, event.transactionHash)
+            let projectId = event.args?.projectId_.toNumber().toString()
+            sock.send([projectId, parseEvent(event)])
+            console.log('event', projectId, event.transactionHash)
           }
         } else {
           console.warn('Invalid network:', project.projectId, project.network)
         }
       }
-      // Listen for mint events and route to project controller
-      contract.on(
-        'Mint',
-        async (projectId, tokenId, projectTokenId, price, to, event) => {
-          sock.send([projectId.toNumber().toString(), parseEvent(event)])
-          console.log('live event', event.address, event.transactionHash)
-        }
-      )
     }
   })
 }
 
-// Setup listeners then launch server
+async function main() {
+  db = (await client.connect()).db('scorpio')
+  console.log('Connected to scorpio db')
+  await backfill()
+  // Listen for mint events and route to project controller
+  contract.on(
+    'Mint',
+    async (projectId, tokenId, projectTokenId, price, to, event) => {
+      const pId = projectId.toNumber().toString()
+      sock.send([pId, parseEvent(event)])
+      console.log('event', pId, event.transactionHash)
+    }
+  )
+  console.log('Listening for Mint events from', process.env.NETWORK)
+}
+
+// Backfill, setup listeners then launch server
 main()
   .then(() => {
+    app.post('/backfill', async (req: Request, res: express.Response): Promise<void> => {
+      const token = req.headers.authorization?.split(' ')[1]
+      if (token && token === process.env.JWT) {
+        let { blockNumber } = req.query;
+        await backfill(parseInt(blockNumber?.toString() || '0'))
+        res.send({ success: true })
+      } else {
+        res.sendStatus(403)
+      }
+    })
     app.listen(8080, () => console.info('App listening on port 8080'))
   })
   .catch((error) => {
