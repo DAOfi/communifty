@@ -93,7 +93,7 @@ async function main() {
     'Mint',
     async (projectId, tokenId, projectTokenId, price, to, event) => {
       const pId = projectId.toNumber().toString()
-      sock.send([pId, parseEvent(event)])
+      sock.send([pId, await parseEvent(event)])
       console.log('event', pId, event.transactionHash)
     }
   )
