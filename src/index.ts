@@ -109,7 +109,7 @@ main()
         const token = req.headers.authorization?.split(' ')[1]
         if (token && token === process.env.JWT) {
           let { blockNumber } = req.query
-          await backfill(parseInt(blockNumber?.toString() || '0'))
+          await backfill(blockNumber ? parseInt(blockNumber.toString()) : 1)
           res.send({ success: true })
         } else {
           res.sendStatus(403)
