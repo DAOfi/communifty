@@ -1,5 +1,3 @@
 env: staging
 contract: 0x4b349A4DA4A9D9a508c3BA45D4195ba0B8a42275
 network: rinkeby
-image:
-  tag: latest
