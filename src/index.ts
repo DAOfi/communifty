@@ -110,7 +110,7 @@ main()
         res.sendStatus(403)
       }
     })
-    app.listen(8080, () => console.info('App listening on port 8080'))
+    app.listen(8080, () => console.info('Publisher API listening on port 8080'))
   })
   .catch((error) => {
     console.error(error)
