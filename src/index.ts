@@ -70,8 +70,10 @@ async function backfill(overrideBlock?: number) {
             )) || []
           for (const event of logs) {
             let projectId = event.args?.projectId_.toNumber().toString()
-            sock.send([projectId, parseEvent(event)])
-            console.log('event', projectId, event.transactionHash)
+            if (parseInt(projectId) === project.projectId) {
+              sock.send([projectId, parseEvent(event)])
+              console.log('event', projectId, event.transactionHash)
+            }
           }
         } else {
           console.warn('Invalid network:', project.projectId, project.network)
