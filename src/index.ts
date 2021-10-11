@@ -35,11 +35,12 @@ const contract: ethers.Contract = new ethers.Contract(
 )
 console.log('Connected contract', process.env.NETWORK, contract.address)
 
-function parseEvent(event: ethers.Event) {
+async function parseEvent(event: ethers.Event) {
   const ret: any = {
     address: event.address,
     blockHash: event.blockHash,
     blockNumber: event.blockNumber,
+    blockTimestamp: (await event.getBlock()).timestamp,
     transactionHash: event.transactionHash,
     args: {},
   }
@@ -71,7 +72,7 @@ async function backfill(overrideBlock?: number) {
           for (const event of logs) {
             let projectId = event.args?.projectId_.toNumber().toString()
             if (parseInt(projectId) === project.projectId) {
-              sock.send([projectId, parseEvent(event)])
+              sock.send([projectId, await parseEvent(event)])
               console.log('event', projectId, event.transactionHash)
             }
           }
@@ -102,16 +103,19 @@ async function main() {
 // Backfill, setup listeners then launch server
 main()
   .then(() => {
-    app.post('/backfill', async (req: Request, res: express.Response): Promise<void> => {
-      const token = req.headers.authorization?.split(' ')[1]
-      if (token && token === process.env.JWT) {
-        let { blockNumber } = req.query;
-        await backfill(parseInt(blockNumber?.toString() || '0'))
-        res.send({ success: true })
-      } else {
-        res.sendStatus(403)
+    app.post(
+      '/backfill',
+      async (req: Request, res: express.Response): Promise<void> => {
+        const token = req.headers.authorization?.split(' ')[1]
+        if (token && token === process.env.JWT) {
+          let { blockNumber } = req.query
+          await backfill(parseInt(blockNumber?.toString() || '0'))
+          res.send({ success: true })
+        } else {
+          res.sendStatus(403)
+        }
       }
-    })
+    )
     app.listen(8080, () => console.info('Publisher API listening on port 8080'))
   })
   .catch((error) => {
