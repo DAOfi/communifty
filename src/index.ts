@@ -19,6 +19,7 @@ requiredEnv.forEach((env) => {
 const BLOCK_INTERVAL = 15000 // wait ms between querying for new blocks
 const port = process.env.PORT || 3030
 const sock = zmq.socket('pub')
+const eventLog: any = {} // Keep track of locally dispatched events to avoid duplication
 sock.bindSync(`tcp://*:${port}`)
 console.log('zmq publishing on port', port)
 
@@ -74,9 +75,21 @@ async function backfill(overrideBlock?: number) {
             const projectId = event.args?.projectId_.toNumber().toString()
             const projectTokenId = event.args?.projectTokenId_.toNumber()
             const tokenId = event.args?.tokenId_.toNumber()
-            if (parseInt(projectId) === project.projectId && (!project.tokens || !project.tokens.hasOwnProperty(tokenId))) {
+            if (
+              !eventLog[event.transactionHash] &&
+              parseInt(projectId) === project.projectId &&
+              (!project.tokens || !project.tokens.hasOwnProperty(tokenId))
+            ) {
               sock.send([projectId, await parseEvent(event)])
-              console.log('event', project.network, projectId, projectTokenId, tokenId, event.transactionHash)
+              console.log(
+                'event',
+                project.network,
+                projectId,
+                projectTokenId,
+                tokenId,
+                event.transactionHash
+              )
+              eventLog[event.transactionHash] = true
             }
           }
         }
