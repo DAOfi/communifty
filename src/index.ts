@@ -17,9 +17,10 @@ requiredEnv.forEach((env) => {
 })
 
 const BLOCK_INTERVAL = 300000 // wait ms between querying for new blocks
+const FIRST_BLOCK = 13161581 // contract created at
 const port = process.env.PORT || 3030
 const sock = zmq.socket('pub')
-const eventLog: any = {} // Keep track of locally dispatched events to avoid duplication
+
 sock.bindSync(`tcp://*:${port}`)
 console.log('zmq publishing on port', port)
 
@@ -36,6 +37,8 @@ const contract: ethers.Contract = new ethers.Contract(
   provider
 )
 console.log('Connected contract', process.env.NETWORK, contract.address)
+
+let eventLog: any = {} // Keep track of locally dispatched events to avoid duplication
 
 async function parseEvent(event: ethers.Event) {
   const ret: any = {
@@ -102,8 +105,8 @@ async function main() {
   db = (await client.connect()).db('scorpio')
   console.log('Connected to scorpio db')
   console.log('Querying for Mint events from', process.env.NETWORK)
-  await backfill()
-  setInterval(async () => await backfill(), BLOCK_INTERVAL) // Query blocks
+  await backfill(FIRST_BLOCK) // From contract creation
+  setInterval(async () => await backfill(), BLOCK_INTERVAL) // Query blocks from last processed
 }
 
 // Backfill, setup listeners then launch server
@@ -115,10 +118,19 @@ main()
         const token = req.headers.authorization?.split(' ')[1]
         if (token && token === process.env.JWT) {
           let { blockNumber } = req.query
-          await backfill(blockNumber ? parseInt(blockNumber.toString()) : 1)
+          await backfill(blockNumber ? parseInt(blockNumber.toString()) : FIRST_BLOCK)
           res.send({ success: true })
         } else {
           res.sendStatus(403)
+        }
+      }
+    )
+    app.post(
+      '/cache/clear',
+      async (req: Request, res: express.Response): Promise<void> => {
+        const token = req.headers.authorization?.split(' ')[1]
+        if (token && token === process.env.JWT) {
+          eventLog = {}
         }
       }
     )
