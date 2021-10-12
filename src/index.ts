@@ -16,7 +16,7 @@ requiredEnv.forEach((env) => {
   }
 })
 
-const BLOCK_INTERVAL = 60000 // wait ms between querying for new blocks
+const BLOCK_INTERVAL = 300000 // wait ms between querying for new blocks
 const port = process.env.PORT || 3030
 const sock = zmq.socket('pub')
 const eventLog: any = {} // Keep track of locally dispatched events to avoid duplication
