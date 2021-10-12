@@ -131,6 +131,9 @@ main()
         const token = req.headers.authorization?.split(' ')[1]
         if (token && token === process.env.JWT) {
           eventLog = {}
+          res.send({ success: true })
+        } else {
+          res.sendStatus(403)
         }
       }
     )
