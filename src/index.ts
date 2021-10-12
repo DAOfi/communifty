@@ -16,6 +16,7 @@ requiredEnv.forEach((env) => {
   }
 })
 
+const BLOCK_INTERVAL = 15000 // wait ms between querying for new blocks
 const port = process.env.PORT || 3030
 const sock = zmq.socket('pub')
 sock.bindSync(`tcp://*:${port}`)
@@ -70,14 +71,14 @@ async function backfill(overrideBlock?: number) {
               blockNumber
             )) || []
           for (const event of logs) {
-            let projectId = event.args?.projectId_.toNumber().toString()
-            if (parseInt(projectId) === project.projectId) {
+            const projectId = event.args?.projectId_.toNumber().toString()
+            const projectTokenId = event.args?.projectTokenId_.toNumber()
+            const tokenId = event.args?.tokenId_.toNumber()
+            if (parseInt(projectId) === project.projectId && (!project.tokens || !project.tokens.hasOwnProperty(tokenId))) {
               sock.send([projectId, await parseEvent(event)])
-              console.log('event', projectId, event.transactionHash)
+              console.log('event', project.network, projectId, projectTokenId, tokenId, event.transactionHash)
             }
           }
-        } else {
-          console.warn('Invalid network:', project.projectId, project.network)
         }
       }
     }
@@ -87,16 +88,7 @@ async function backfill(overrideBlock?: number) {
 async function main() {
   db = (await client.connect()).db('scorpio')
   console.log('Connected to scorpio db')
-  await backfill()
-  // Listen for mint events and route to project controller
-  contract.on(
-    'Mint',
-    async (projectId, tokenId, projectTokenId, price, to, event) => {
-      const pId = projectId.toNumber().toString()
-      sock.send([pId, await parseEvent(event)])
-      console.log('event', pId, event.transactionHash)
-    }
-  )
+  setInterval(async () => await backfill(), BLOCK_INTERVAL) // Query blocks
   console.log('Listening for Mint events from', process.env.NETWORK)
 }
 
