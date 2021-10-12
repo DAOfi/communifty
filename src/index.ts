@@ -16,7 +16,7 @@ requiredEnv.forEach((env) => {
   }
 })
 
-const BLOCK_INTERVAL = 15000 // wait ms between querying for new blocks
+const BLOCK_INTERVAL = 60000 // wait ms between querying for new blocks
 const port = process.env.PORT || 3030
 const sock = zmq.socket('pub')
 const eventLog: any = {} // Keep track of locally dispatched events to avoid duplication
@@ -101,8 +101,9 @@ async function backfill(overrideBlock?: number) {
 async function main() {
   db = (await client.connect()).db('scorpio')
   console.log('Connected to scorpio db')
+  console.log('Querying for Mint events from', process.env.NETWORK)
+  await backfill()
   setInterval(async () => await backfill(), BLOCK_INTERVAL) // Query blocks
-  console.log('Listening for Mint events from', process.env.NETWORK)
 }
 
 // Backfill, setup listeners then launch server
