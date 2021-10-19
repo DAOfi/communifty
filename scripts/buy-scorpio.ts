@@ -32,7 +32,7 @@ async function main() {
     process.env.TO || wallet.address,
     {
       value: mintPrice,
-      gasLimit: 10e6,
+      gasLimit: 2e6,
       gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
       nonce,
     }

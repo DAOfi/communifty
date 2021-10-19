@@ -24,7 +24,7 @@ async function main() {
   const enableTx = await token.disablePreMint(
     parseInt(process.env.PROJECT_ID || '0'),
     {
-      gasLimit: 10e6,
+      gasLimit: 5e4,
       gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
       nonce,
     }
