@@ -9,7 +9,7 @@ async function main() {
   console.log('Wallet:', wallet.address)
 
   const gas = process.env.GAS || '50'
-  const nonce = await wallet.getTransactionCount()
+  const nonce = process.env.NONCE ? parseInt(process.env.NONCE) : await wallet.getTransactionCount()
   console.log('Gas:', gas)
   console.log('Nonce:', nonce)
 

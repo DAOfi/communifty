@@ -29,7 +29,7 @@ async function main() {
     process.env.RECIPIENT || wallet.address,
     process.env.BASE_URI || '',
     {
-      gasLimit: 2e5,
+      gasLimit: 25e4,
       gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
       nonce,
     }

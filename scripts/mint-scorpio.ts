@@ -28,7 +28,7 @@ async function main() {
     parseInt(process.env.MAX_TOKEN_ID || '0'),
     process.env.TO || wallet.address,
     {
-      gasLimit: 10e6,
+      gasLimit: 5e6,
       gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
       nonce,
     }
